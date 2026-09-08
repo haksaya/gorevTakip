@@ -7,31 +7,32 @@ namespace GorevTakip.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
+    private readonly DashboardRepository _repo;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(DashboardRepository repo)
     {
-        _logger = logger;
+        _repo = repo;
     }
 
     public IActionResult Index()
     {
-        return View();
-    }
+        // out parametreleri karşıla
+        _repo.SayilariGetir(out int toplam, out int tamamlanan, out int bekleyen,
+                            out int devamEden, out int gecikmis, out int bugunBiten);
 
-    public IActionResult Privacy()
-    {
-        return View();
-    }
+        var model = new DashboardViewModel
+        {
+            ToplamGorev     = toplam,
+            TamamlananGorev = tamamlanan,
+            BekleyenGorev   = bekleyen,
+            DevamEdenGorev  = devamEden,
+            GecikmisGorev   = gecikmis,
+            BugunBitenGorev = bugunBiten,
 
-    public IActionResult HashUret()
-    {
-        return Content(KullaniciRepository.SifreyiHashle("gorev123"));
-    }
+            KategoriDagilimlari = _repo.KategoriDagilimi(),
+            YaklasanGorevler    = _repo.YaklasanGorevler(5)
+        };
 
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        return View(model);
     }
 }

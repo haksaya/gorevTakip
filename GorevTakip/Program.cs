@@ -40,6 +40,8 @@ builder.Services
 
 builder.Services.AddScoped<KullaniciRepository>();
 builder.Services.AddScoped<KategoriRepository>();
+builder.Services.AddScoped<GorevRepository>();
+builder.Services.AddScoped<DashboardRepository>();
 
 
 var app = builder.Build();
